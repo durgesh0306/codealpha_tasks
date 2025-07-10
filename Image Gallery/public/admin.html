@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel with Preview</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    h2, h3 { margin-top: 20px; }
+    input, button { margin: 5px 0; width: 100%; padding: 6px; }
+    #status { margin-top: 10px; font-weight: bold; color: green; }
+    .preview-grid { display: flex; flex-wrap: wrap; margin-top: 10px; }
+    .preview-grid img { width: 100px; height: 100px; object-fit: cover; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h2>🛠 Admin Panel</h2>
+
+  <h3>Create Folder (Category)</h3>
+  <input type="text" id="newFolderName" placeholder="Folder name">
+  <button onclick="createFolder()">Create Folder</button>
+
+  <h3>Delete Folder</h3>
+  <input type="text" id="deleteFolderName" placeholder="Folder name">
+  <button onclick="deleteFolder()">Delete Folder</button>
+
+  <h3>Upload Image</h3>
+  <input type="text" id="uploadCategory" placeholder="Folder name">
+  <input type="file" id="imageFile">
+  <button onclick="uploadImage()">Upload Image</button>
+
+  <h3>Delete Image</h3>
+  <input type="text" id="deleteCategory" placeholder="Folder name">
+  <input type="text" id="deleteFilename" placeholder="Exact file name (e.g. abc.jpg)">
+  <button onclick="deleteImage()">Delete Image</button>
+
+  <h3>Preview Images in Folder</h3>
+  <input type="text" id="previewFolder" placeholder="Folder name">
+  <button onclick="previewImages()">Show Images</button>
+  <div id="preview" class="preview-grid"></div>
+
+  <p id="status"></p>
+
+  <script>
+    function createFolder() {
+      fetch('/api/create-folder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: document.getElementById('newFolderName').value })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('status').innerText = data.success ? "✅ Folder created!" : "❌ " + data.message;
+      });
+    }
+
+    function deleteFolder() {
+      fetch('/api/delete-folder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: document.getElementById('deleteFolderName').value })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('status').innerText = data.success ? "✅ Folder deleted!" : "❌ " + data.message;
+      });
+    }
+
+    function uploadImage() {
+      const category = document.getElementById('uploadCategory').value;
+      const file = document.getElementById('imageFile').files[0];
+      if (!category || !file) {
+        document.getElementById('status').innerText = "❌ Please enter folder name and choose file.";
+        return;
+      }
+      const formData = new FormData();
+      formData.append('category', category);
+      formData.append('image', file);
+      fetch('/api/upload-image', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('status').innerText = data.success ? "✅ Image uploaded!" : "❌ Failed to upload.";
+      });
+    }
+
+    function deleteImage() {
+      const category = document.getElementById('deleteCategory').value;
+      const filename = document.getElementById('deleteFilename').value;
+      if (!category || !filename) {
+        document.getElementById('status').innerText = "❌ Please enter folder and file name.";
+        return;
+      }
+      fetch('/api/delete-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, filename })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('status').innerText = data.success ? "✅ Image deleted!" : "❌ " + data.message;
+      });
+    }
+
+    function previewImages() {
+      const folder = document.getElementById('previewFolder').value;
+      if (!folder) {
+        document.getElementById('status').innerText = "❌ Enter folder name to preview.";
+        return;
+      }
+      fetch('/api/list-all')
+      .then(res => res.json())
+      .then(data => {
+        const previewDiv = document.getElementById('preview');
+        previewDiv.innerHTML = ''; // clear old images
+        if (data[folder] && data[folder].length > 0) {
+          data[folder].forEach(imgUrl => {
+            const img = document.createElement('img');
+            img.src = imgUrl;
+            previewDiv.appendChild(img);
+          });
+          document.getElementById('status').innerText = `✅ Showing ${data[folder].length} image(s).`;
+        } else {
+          document.getElementById('status').innerText = "❌ No images found in folder.";
+        }
+      });
+    }
+  </script>
+</body>
+</html>
