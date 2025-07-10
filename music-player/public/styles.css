@@ -1,0 +1,154 @@
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #4a00e0, #8e2de2);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Layout */
+.player-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  max-width: 1100px;
+  width: 100%;
+}
+
+/* Card sections */
+.player-section, .playlist-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 20px;
+  flex: 1 1 350px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* Titles */
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Cover art */
+.cover-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.cover-art {
+  width: 180px;
+  height: 180px;
+  border-radius: 15px;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+/* Song info */
+.song-info {
+  text-align: center;
+  margin: 10px 0;
+}
+.marquee span {
+  display: inline-block;
+  animation: marquee 8s linear infinite;
+  white-space: nowrap;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+#artist {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Track info & progress */
+.track-info {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+.progress-bar {
+  flex: 1;
+}
+
+/* Controls */
+.controls, .extra-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+button {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+button:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+}
+input[type=range] {
+  accent-color: #fff;
+}
+
+/* Playlist list */
+.folder-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.playlist {
+  list-style: none;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+.playlist li {
+  text-align: left;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.playlist li:hover {
+  background: rgba(255,255,255,0.15);
+}
+.playlist li.active {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .player-wrapper {
+    flex-direction: column;
+  }
+  .player-section, .playlist-section {
+    flex: 1 1 100%;
+  }
+}

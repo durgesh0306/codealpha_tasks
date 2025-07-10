@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Glass Music Player</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="player-wrapper">
+
+    <section class="player-section">
+      <h2 class="section-title">Now Playing</h2>
+      <div class="cover-wrapper">
+        <img id="cover-art" src="covers/default.png" alt="Cover Art" class="cover-art" />
+      </div>
+      <div class="song-info">
+        <div class="marquee"><span id="title">Title</span></div>
+        <p id="artist">Artist</p>
+      </div>
+      <div id="track-info" class="track-info">1 of 1</div>
+      <div class="progress">
+        <span id="current-time">0:00</span>
+        <input type="range" id="progress" value="0" min="0" class="progress-bar">
+        <span id="duration">0:00</span>
+      </div>
+      <div class="controls">
+        <button id="prev" title="Previous">⏮️</button>
+        <button id="play" title="Play/Pause">▶️</button>
+        <button id="next" title="Next">⏭️</button>
+      </div>
+      <div class="extra-controls">
+        <button id="fav" title="Favorite">❤️</button>
+        <button id="repeat">Mode: all</button>
+        <button id="mute" title="Mute/Unmute">🔊</button>
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+      </div>
+      <audio id="audio"></audio>
+    </section>
+
+    <section class="playlist-section">
+      <h2 class="section-title">Playlists</h2>
+      <div id="folder-list" class="folder-list"></div>
+      <ul id="playlist" class="playlist"></ul>
+    </section>
+
+  </div>
+<script src="script.js"></script>
+</body>
+</html>

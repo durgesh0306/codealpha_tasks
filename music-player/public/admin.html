@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="player">
+  <h2>Admin Login</h2>
+  <input type="password" id="adminPass" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <div id="adminArea" style="display:none;">
+    <h3>Folders</h3>
+    <input id="newFolder" placeholder="New folder name">
+    <button onclick="createFolder()">Create Folder</button>
+    <ul id="folders"></ul>
+  </div>
+</div>
+<script>
+let authenticated = false;
+
+async function login() {
+  const password = document.getElementById('adminPass').value;
+  const res = await fetch('/api/login', { 
+    method:'POST', 
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({password})
+  });
+  if(res.ok) {
+    authenticated = true;
+    document.getElementById('adminArea').style.display = 'block';
+    loadFolders();
+  } else {
+    alert('Wrong password');
+  }
+}
+
+async function loadFolders(){
+  const res = await fetch('/api/folders');
+  const data = await res.json();
+  const list = document.getElementById('folders');
+  list.innerHTML = '';
+  data.forEach(f => {
+    const li = document.createElement('li');
+    li.textContent = f.folder;
+    li.innerHTML += ` <button onclick="deleteFolder('${f.folder}')">Delete</button>
+      <input type="file" multiple onchange="uploadSongs('${f.folder}',this)">`;
+    f.songs.forEach(s => {
+      li.innerHTML += `<div>${s.title}
+      <button onclick="deleteSong('${f.folder}','${s.title + pathExt(s.src)}')">🗑</button></div>`;
+    });
+    list.appendChild(li);
+  });
+}
+
+function pathExt(p){ return p.slice(p.lastIndexOf('.')) }
+
+async function createFolder(){
+  const name = document.getElementById('newFolder').value;
+  await fetch('/api/folders',{method:'POST',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({name})});
+  loadFolders();
+}
+
+async function deleteFolder(name){
+  await fetch('/api/folders/'+name,{method:'DELETE'});
+  loadFolders();
+}
+
+async function uploadSongs(folder,input){
+  const form = new FormData();
+  for(let f of input.files) form.append('songs', f);
+  await fetch('/api/folders/'+folder+'/upload',{method:'POST',body:form});
+  loadFolders();
+}
+
+async function deleteSong(folder,song){
+  await fetch(`/api/folders/${folder}/songs/${song}`,{method:'DELETE'});
+  loadFolders();
+}
+</script>
+</body>
+</html>
